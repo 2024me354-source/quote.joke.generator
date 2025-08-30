@@ -6,7 +6,6 @@ import random
 # Load Datasets
 # -----------------------------
 dad_jokes_file = "dad_jokes.csv"
-quotes_file = "quotes.json"  # JSON file with 'Quote' and 'Author'
 
 @st.cache_data
 def load_data():
@@ -16,22 +15,9 @@ def load_data():
     except FileNotFoundError:
         st.error(f"Jokes file '{dad_jokes_file}' not found!")
         jokes_df = pd.DataFrame(columns=["joke"])
+    return jokes_df
 
-    # Load quotes
-    try:
-        quotes_df = pd.read_json(quotes_file)
-        # Rename columns to lowercase for consistency
-        quotes_df = quotes_df.rename(columns={"Quote": "quote", "Author": "author"})
-    except FileNotFoundError:
-        st.error(f"Quotes file '{quotes_file}' not found!")
-        quotes_df = pd.DataFrame(columns=["quote", "author"])
-    except ValueError:
-        st.error(f"Quotes file '{quotes_file}' is not a valid JSON!")
-        quotes_df = pd.DataFrame(columns=["quote", "author"])
-
-    return jokes_df, quotes_df
-
-jokes_df, quotes_df = load_data()
+jokes_df = load_data()
 
 # -----------------------------
 # Streamlit UI
@@ -56,9 +42,22 @@ if option == "Jokes":
             st.warning("No jokes found in the dataset!")
 
 # -----------------------------
-# Quotes Section
+# Quotes Section (with file uploader)
 # -----------------------------
 elif option == "Quotes":
+    uploaded_file = st.file_uploader("Upload your file here", type=["json"])
+
+    if uploaded_file is not None:
+        try:
+            quotes_df = pd.read_json(uploaded_file)
+            quotes_df = quotes_df.rename(columns={"Quote": "quote", "Author": "author"})
+        except ValueError:
+            st.error("Uploaded file is not a valid JSON!")
+            quotes_df = pd.DataFrame(columns=["quote", "author"])
+    else:
+        st.info("Please upload a Quotes JSON file to continue.")
+        quotes_df = pd.DataFrame(columns=["quote", "author"])
+
     if st.button("Give me a Quote 💡"):
         if "quote" in quotes_df.columns and "author" in quotes_df.columns:
             valid_quotes = quotes_df[quotes_df["quote"].notna()]
@@ -78,14 +77,3 @@ elif option == "Quotes":
 # -----------------------------
 st.markdown("---")
 st.caption("Made with ❤️ using Streamlit")
-
-
-
-
-
-
-
-
-
-
-
