@@ -58,7 +58,7 @@ option = st.sidebar.radio("Choose mode:", ("Jokes", "Quotes"))
 # Jokes Section
 # -----------------------------
 if option == "Jokes":
-    if st.button("Tell me a Joke 🤣"):
+    if st.button("Tell me a something to laugh"):
         valid_jokes = jokes_df["joke"].dropna().tolist()
         if valid_jokes:
             joke = random.choice(valid_jokes)
