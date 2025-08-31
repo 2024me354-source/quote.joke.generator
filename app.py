@@ -5,14 +5,13 @@ import random
 # -----------------------------
 # Load Jokes Dataset
 # -----------------------------
-dad_jokes_file = "dad_jokes.csv"  # keep your jokes CSV in repo
+dad_jokes_file = "dad_jokes.csv"  # CSV should have a "joke" column
 
 @st.cache_data
 def load_jokes():
     try:
         jokes_df = pd.read_csv(dad_jokes_file)
     except FileNotFoundError:
-        st.error(f"Jokes file '{dad_jokes_file}' not found!")
         jokes_df = pd.DataFrame(columns=["joke"])
     return jokes_df
 
@@ -32,94 +31,78 @@ quotes_list = [
     {"quote": "If you tell the truth, you don't have to remember anything.", "author": "Mark Twain"},
     {"quote": "A friend is someone who knows all about you and still loves you.", "author": "Elbert Hubbard"},
     {"quote": "Always forgive your enemies; nothing annoys them so much.", "author": "Oscar Wilde"},
-    {"quote": "Live as if you were to die tomorrow. Learn as if you were to live forever.", "author": "Mahatma Gandhi"},
-    {"quote": "To live is the rarest thing in the world. Most people exist, that is all.", "author": "Oscar Wilde"},
-    {"quote": "Without music, life would be a mistake.", "author": "Friedrich Nietzsche"},
-    {"quote": "We accept the love we think we deserve.", "author": "Stephen Chbosky"},
-    {"quote": "It is better to be hated for what you are than to be loved for what you are not.", "author": "André Gide"},
-    {"quote": "The man who does not read has no advantage over the man who cannot read.", "author": "Mark Twain"},
-    {"quote": "It does not do to dwell on dreams and forget to live.", "author": "J.K. Rowling"},
-    {"quote": "Good friends, good books, and a sleepy conscience: this is the ideal life.", "author": "Mark Twain"},
-    {"quote": "Life is what happens to us while we are making other plans.", "author": "Allen Saunders"},
-    {"quote": "Not all of us can do great things. But we can do small things with great love.", "author": "Mother Teresa"}
 ]
 
 # -----------------------------
-# Streamlit Config & Custom CSS
+# Streamlit UI Setup
 # -----------------------------
-st.set_page_config(page_title="Joke & Quote Generator", page_icon="🎭", layout="centered")
+st.set_page_config(page_title="🎭 Joke & Quote Generator", page_icon="🎭", layout="wide")
 
+# Custom CSS
 st.markdown("""
     <style>
     body {
-        background: linear-gradient(135deg, #1d2671, #c33764);
-    }
-    .main {
-        background-color: transparent;
-    }
-    .stApp {
-        background: linear-gradient(135deg, #1d2671, #c33764);
+        background: linear-gradient(135deg, #667eea, #764ba2);
         color: white;
+    }
+    .main-title {
+        text-align: center;
+        font-size: 40px;
+        font-weight: bold;
+        color: #fdfdfd;
+        margin-bottom: 20px;
     }
     .card {
-        background: white;
-        border-radius: 20px;
-        padding: 2rem;
+        background-color: white;
         color: black;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 2px 4px 15px rgba(0,0,0,0.2);
         text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-        margin-top: 2rem;
     }
-    .title {
-        font-size: 2rem;
-        color: #1d2671;
-        margin-bottom: 1rem;
+    .footer {
+        text-align: center;
+        color: #eee;
+        margin-top: 50px;
+        font-size: 14px;
     }
-    .btn {
-        display: inline-block;
-        padding: 0.7rem 1.3rem;
-        border-radius: 12px;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-        color: white;
-        margin: 0.5rem;
-        text-decoration: none;
-    }
-    .joke-btn { background: #e63946; }
-    .quote-btn { background: #2a9d8f; }
     </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
-# UI Layout
-# -----------------------------
-st.markdown("<div class='card'>", unsafe_allow_html=True)
-st.markdown("<div class='title'>🎭 Joke & Quote Generator</div>", unsafe_allow_html=True)
-st.write("Need a laugh or some inspiration? Pick one below!")
+# Title
+st.markdown("<div class='main-title'>🎭 Joke & Quote Generator</div>", unsafe_allow_html=True)
+st.write("Need a laugh or some inspiration? Both are here 👇")
 
+# -----------------------------
+# Layout: Two columns
+# -----------------------------
 col1, col2 = st.columns(2)
 
+# ---- Jokes Card ----
 with col1:
-    if st.button("🤣 Tell me a Joke", key="joke_btn"):
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
+    st.subheader("🤣 Random Joke")
+    if st.button("Tell me a Joke!"):
         valid_jokes = jokes_df["joke"].dropna().tolist()
         if valid_jokes:
             joke = random.choice(valid_jokes)
             st.success(joke)
         else:
-            st.warning("No jokes found in the dataset!")
+            st.warning("No jokes found in dataset!")
+    st.markdown("</div>", unsafe_allow_html=True)
 
+# ---- Quotes Card ----
 with col2:
-    if st.button("💡 Give me a Quote", key="quote_btn"):
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
+    st.subheader("💡 Inspiring Quote")
+    if st.button("Give me a Quote!"):
         quote = random.choice(quotes_list)
-        st.info(quote["quote"])
+        st.info(f"“{quote['quote']}”")
         st.caption(f"— {quote['author']}")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
-
-# -----------------------------
 # Footer
-# -----------------------------
-st.markdown("<br><hr><center>Made with ❤️ using Streamlit</center>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>Made with ❤️ using Streamlit</div>", unsafe_allow_html=True)
+
 
 
