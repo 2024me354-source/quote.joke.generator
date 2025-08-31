@@ -5,13 +5,14 @@ import random
 # -----------------------------
 # Load Jokes Dataset
 # -----------------------------
-dad_jokes_file = "dad_jokes.csv"  # CSV should have a "joke" column
+dad_jokes_file = "dad_jokes.csv"
 
 @st.cache_data
 def load_jokes():
     try:
         jokes_df = pd.read_csv(dad_jokes_file)
     except FileNotFoundError:
+        st.error(f"Jokes file '{dad_jokes_file}' not found!")
         jokes_df = pd.DataFrame(columns=["joke"])
     return jokes_df
 
@@ -30,79 +31,104 @@ quotes_list = [
     {"quote": "In three words I can sum up everything I've learned about life: it goes on.", "author": "Robert Frost"},
     {"quote": "If you tell the truth, you don't have to remember anything.", "author": "Mark Twain"},
     {"quote": "A friend is someone who knows all about you and still loves you.", "author": "Elbert Hubbard"},
-    {"quote": "Always forgive your enemies; nothing annoys them so much.", "author": "Oscar Wilde"},
+    {"quote": "Without music, life would be a mistake.", "author": "Friedrich Nietzsche"},
 ]
 
 # -----------------------------
-# Streamlit UI Setup
+# Streamlit Page Config
 # -----------------------------
-st.set_page_config(page_title="🎭 Joke & Quote Generator", page_icon="🎭", layout="wide")
+st.set_page_config(page_title="Joke & Quote Generator", page_icon="🎭", layout="centered")
 
+# -----------------------------
 # Custom CSS
+# -----------------------------
 st.markdown("""
     <style>
-    body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+    /* Background Gradient */
+    .stApp {
+        background: linear-gradient(135deg, #1e3c72, #2a5298, #f12711, #f5af19);
+        background-size: 400% 400%;
+        animation: gradientBG 12s ease infinite;
         color: white;
     }
-    .main-title {
-        text-align: center;
-        font-size: 40px;
-        font-weight: bold;
-        color: #fdfdfd;
-        margin-bottom: 20px;
+
+    @keyframes gradientBG {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
     }
-    .card {
-        background-color: white;
-        color: black;
+
+    /* Title */
+    h1 {
+        text-align: center;
+        font-size: 3rem;
+        color: #fff;
+        text-shadow: 2px 2px 4px #00000055;
+    }
+
+    /* Buttons */
+    div.stButton > button {
+        background-color: #ff7b00;
+        color: white;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 18px;
+        font-weight: bold;
+        box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
+        transition: 0.3s;
+    }
+    div.stButton > button:hover {
+        background-color: #ff9500;
+        transform: scale(1.05);
+    }
+
+    /* Output card */
+    .st-success, .st-info {
+        background: rgba(255, 255, 255, 0.15);
         padding: 20px;
         border-radius: 15px;
-        box-shadow: 2px 4px 15px rgba(0,0,0,0.2);
+        font-size: 1.2rem;
         text-align: center;
+        color: #fff;
+        border: 1px solid #ffffff55;
     }
-    .footer {
+
+    /* Footer */
+    footer {
         text-align: center;
-        color: #eee;
-        margin-top: 50px;
-        font-size: 14px;
+        color: #fff;
+        margin-top: 40px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# Title
-st.markdown("<div class='main-title'>🎭 Joke & Quote Generator</div>", unsafe_allow_html=True)
-st.write("Need a laugh or some inspiration? Both are here 👇")
+# -----------------------------
+# App UI
+# -----------------------------
+st.title("🎭 Joke & Quote Generator")
+st.write("Need a **laugh** or some **inspiration**? Pick one below 👇")
 
-# -----------------------------
-# Layout: Two columns
-# -----------------------------
 col1, col2 = st.columns(2)
 
-# ---- Jokes Card ----
 with col1:
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.subheader("🤣 Random Joke")
-    if st.button("Tell me a Joke!"):
+    if st.button("🤣 Tell me a Joke"):
         valid_jokes = jokes_df["joke"].dropna().tolist()
         if valid_jokes:
             joke = random.choice(valid_jokes)
             st.success(joke)
         else:
-            st.warning("No jokes found in dataset!")
-    st.markdown("</div>", unsafe_allow_html=True)
+            st.warning("⚠️ No jokes found in the dataset!")
 
-# ---- Quotes Card ----
 with col2:
-    st.markdown("<div class='card'>", unsafe_allow_html=True)
-    st.subheader("💡 Inspiring Quote")
-    if st.button("Give me a Quote!"):
+    if st.button("💡 Inspire Me"):
         quote = random.choice(quotes_list)
-        st.info(f"“{quote['quote']}”")
-        st.caption(f"— {quote['author']}")
-    st.markdown("</div>", unsafe_allow_html=True)
+        st.info(f"“{quote['quote']}”\n\n— {quote['author']}")
 
+# -----------------------------
 # Footer
-st.markdown("<div class='footer'>Made with ❤️ using Streamlit</div>", unsafe_allow_html=True)
+# -----------------------------
+st.markdown("<footer>✨ Made with ❤️ using Streamlit ✨</footer>", unsafe_allow_html=True)
+
 
 
 
