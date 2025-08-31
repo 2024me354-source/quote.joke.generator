@@ -45,20 +45,63 @@ quotes_list = [
 ]
 
 # -----------------------------
-# Streamlit UI
+# Streamlit Config & Custom CSS
 # -----------------------------
 st.set_page_config(page_title="Joke & Quote Generator", page_icon="🎭", layout="centered")
-st.title("🎭 Joke & Quote Generator")
+
+st.markdown("""
+    <style>
+    body {
+        background: linear-gradient(135deg, #1d2671, #c33764);
+    }
+    .main {
+        background-color: transparent;
+    }
+    .stApp {
+        background: linear-gradient(135deg, #1d2671, #c33764);
+        color: white;
+    }
+    .card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        color: black;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        margin-top: 2rem;
+    }
+    .title {
+        font-size: 2rem;
+        color: #1d2671;
+        margin-bottom: 1rem;
+    }
+    .btn {
+        display: inline-block;
+        padding: 0.7rem 1.3rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        margin: 0.5rem;
+        text-decoration: none;
+    }
+    .joke-btn { background: #e63946; }
+    .quote-btn { background: #2a9d8f; }
+    </style>
+""", unsafe_allow_html=True)
+
+# -----------------------------
+# UI Layout
+# -----------------------------
+st.markdown("<div class='card'>", unsafe_allow_html=True)
+st.markdown("<div class='title'>🎭 Joke & Quote Generator</div>", unsafe_allow_html=True)
 st.write("Need a laugh or some inspiration? Pick one below!")
 
-# Sidebar Choice
-option = st.sidebar.radio("Choose mode:", ("Jokes", "Quotes"))
+col1, col2 = st.columns(2)
 
-# -----------------------------
-# Jokes Section
-# -----------------------------
-if option == "Jokes":
-    if st.button("Tell me a something to laugh"):
+with col1:
+    if st.button("🤣 Tell me a Joke", key="joke_btn"):
         valid_jokes = jokes_df["joke"].dropna().tolist()
         if valid_jokes:
             joke = random.choice(valid_jokes)
@@ -66,19 +109,17 @@ if option == "Jokes":
         else:
             st.warning("No jokes found in the dataset!")
 
-# -----------------------------
-# Quotes Section
-# -----------------------------
-elif option == "Quotes":
-    if st.button("Give me a Quote 💡"):
+with col2:
+    if st.button("💡 Give me a Quote", key="quote_btn"):
         quote = random.choice(quotes_list)
         st.info(quote["quote"])
-        with st.expander("Author"):
-            st.success(quote["author"])
+        st.caption(f"— {quote['author']}")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 # -----------------------------
 # Footer
 # -----------------------------
-st.markdown("---")
-st.caption("Made with ❤️ using Streamlit")
+st.markdown("<br><hr><center>Made with ❤️ using Streamlit</center>", unsafe_allow_html=True)
+
 
