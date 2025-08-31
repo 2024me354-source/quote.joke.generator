@@ -5,7 +5,7 @@ import random
 # -----------------------------
 # Load Jokes Dataset
 # -----------------------------
-dad_jokes_file = "dad_jokes.csv"
+dad_jokes_file = "dad_jokes.csv"  # keep your jokes CSV in repo
 
 @st.cache_data
 def load_jokes():
@@ -31,103 +31,124 @@ quotes_list = [
     {"quote": "In three words I can sum up everything I've learned about life: it goes on.", "author": "Robert Frost"},
     {"quote": "If you tell the truth, you don't have to remember anything.", "author": "Mark Twain"},
     {"quote": "A friend is someone who knows all about you and still loves you.", "author": "Elbert Hubbard"},
-    {"quote": "Without music, life would be a mistake.", "author": "Friedrich Nietzsche"},
+    {"quote": "Always forgive your enemies; nothing annoys them so much.", "author": "Oscar Wilde"},
 ]
 
 # -----------------------------
-# Streamlit Page Config
+# Streamlit UI
 # -----------------------------
 st.set_page_config(page_title="Joke & Quote Generator", page_icon="🎭", layout="centered")
 
-# -----------------------------
-# Custom CSS
-# -----------------------------
+# Custom CSS Styling
 st.markdown("""
     <style>
-    /* Background Gradient */
-    .stApp {
-        background: linear-gradient(135deg, #1e3c72, #2a5298, #f12711, #f5af19);
-        background-size: 400% 400%;
-        animation: gradientBG 12s ease infinite;
-        color: white;
-    }
+        /* Background Gradient */
+        .stApp {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
 
-    @keyframes gradientBG {
-        0% {background-position: 0% 50%;}
-        50% {background-position: 100% 50%;}
-        100% {background-position: 0% 50%;}
-    }
+        /* Title */
+        h1 {
+            text-align: center;
+            font-size: 3rem;
+            color: #ffcc00;
+            text-shadow: 2px 2px 8px #000;
+        }
 
-    /* Title */
-    h1 {
-        text-align: center;
-        font-size: 3rem;
-        color: #fff;
-        text-shadow: 2px 2px 4px #00000055;
-    }
+        /* Buttons */
+        div.stButton > button {
+            background: #ff7b00;
+            color: white;
+            font-size: 1.2rem;
+            border-radius: 12px;
+            padding: 12px 20px;
+            border: none;
+            box-shadow: 2px 4px 10px rgba(0,0,0,0.4);
+            transition: 0.3s;
+        }
+        div.stButton > button:hover {
+            background: #ff9500;
+            transform: scale(1.05);
+        }
 
-    /* Buttons */
-    div.stButton > button {
-        background-color: #ff7b00;
-        color: white;
-        border-radius: 12px;
-        padding: 12px 24px;
-        font-size: 18px;
-        font-weight: bold;
-        box-shadow: 0px 4px 6px rgba(0,0,0,0.3);
-        transition: 0.3s;
-    }
-    div.stButton > button:hover {
-        background-color: #ff9500;
-        transform: scale(1.05);
-    }
+        /* Output card - jokes */
+        .joke-box {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            text-align: center;
+            color: #00ffcc;
+            border: 2px solid #00ffcc;
+            box-shadow: 0px 0px 12px rgba(0, 255, 204, 0.6);
+            font-weight: bold;
+            margin-top: 20px;
+        }
 
-    /* Output card */
-    .st-success, .st-info {
-        background: rgba(255, 255, 255, 0.15);
-        padding: 20px;
-        border-radius: 15px;
-        font-size: 1.2rem;
-        text-align: center;
-        color: #fff;
-        border: 1px solid #ffffff55;
-    }
+        /* Output card - quotes */
+        .quote-box {
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            border-radius: 15px;
+            font-size: 1.3rem;
+            text-align: center;
+            color: #ffcc00;
+            border: 2px solid #ffcc00;
+            box-shadow: 0px 0px 12px rgba(255, 204, 0, 0.6);
+            font-weight: bold;
+            margin-top: 20px;
+        }
 
-    /* Footer */
-    footer {
-        text-align: center;
-        color: #fff;
-        margin-top: 40px;
-    }
+        /* Author styling */
+        .author {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #ffffff;
+            font-style: italic;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            color: #ddd;
+            font-size: 0.9rem;
+        }
     </style>
 """, unsafe_allow_html=True)
 
-# -----------------------------
-# App UI
-# -----------------------------
-st.title("🎭 Joke & Quote Generator")
-st.write("Need a **laugh** or some **inspiration**? Pick one below 👇")
+# Title
+st.markdown("<h1>🎭 Joke & Quote Generator</h1>", unsafe_allow_html=True)
+st.write("<p style='text-align:center;'>Need a laugh or some inspiration? Pick one below!</p>", unsafe_allow_html=True)
 
 col1, col2 = st.columns(2)
 
+# -----------------------------
+# Jokes Section
+# -----------------------------
 with col1:
     if st.button("🤣 Tell me a Joke"):
         valid_jokes = jokes_df["joke"].dropna().tolist()
         if valid_jokes:
             joke = random.choice(valid_jokes)
-            st.success(joke)
+            st.markdown(f"<div class='joke-box'>{joke}</div>", unsafe_allow_html=True)
         else:
-            st.warning("⚠️ No jokes found in the dataset!")
+            st.warning("No jokes found in the dataset!")
 
+# -----------------------------
+# Quotes Section
+# -----------------------------
 with col2:
-    if st.button("💡 Inspire Me"):
+    if st.button("💡 Give me a Quote"):
         quote = random.choice(quotes_list)
-        st.info(f"“{quote['quote']}”\n\n— {quote['author']}")
+        st.markdown(f"<div class='quote-box'>{quote['quote']}<div class='author'>- {quote['author']}</div></div>", unsafe_allow_html=True)
 
 # -----------------------------
 # Footer
 # -----------------------------
-st.markdown("<footer>✨ Made with ❤️ using Streamlit ✨</footer>", unsafe_allow_html=True)
+st.markdown("<div class='footer'>Made with ❤️ using Streamlit</div>", unsafe_allow_html=True)
+
 
 
 
